@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEON HUNT // CYBERPUNK SHOOTER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- TELA INICIAL -->
+  <div id="screen-intro" class="screen active">
+    <div class="intro-bg"></div>
+    <div class="intro-content">
+      <div class="glitch-wrapper">
+        <h1 class="glitch" data-text="NEON HUNT">NEON HUNT</h1>
+      </div>
+      <p class="subtitle">// CYBERPUNK DUCK HUNTER //</p>
+      <div class="menu-buttons">
+        <button class="btn-neon btn-start" onclick="GameController.startGame()">[ INICIAR MISSÃO ]</button>
+        <button class="btn-neon btn-ranking" onclick="GameController.showRanking()">[ RANKING ]</button>
+        <button class="btn-neon btn-how" onclick="GameController.showHowToPlay()">[ COMO JOGAR ]</button>
+      </div>
+      <div class="version-tag">v1.0.0 // BUILD 2077</div>
+    </div>
+  </div>
+
+  <!-- TELA COMO JOGAR -->
+  <div id="screen-howto" class="screen">
+    <div class="intro-bg"></div>
+    <div class="intro-content howto-content">
+      <h2 class="section-title">// COMO JOGAR //</h2>
+      <div class="howto-grid">
+        <div class="howto-item"><span class="key">MOUSE</span><span>Mira / Aponta</span></div>
+        <div class="howto-item"><span class="key">CLIQUE ESQ</span><span>Atirar</span></div>
+        <div class="howto-item"><span class="key">1-6</span><span>Trocar arma</span></div>
+        <div class="howto-item"><span class="key">R</span><span>Recarregar</span></div>
+        <div class="howto-item"><span class="key">ESC</span><span>Pausar</span></div>
+      </div>
+      <p class="howto-desc">Sobreviva às hordas de inimigos cibernéticos. Após cada horda, escolha um upgrade para potencializar seu combate. A cada 5 hordas, enfrente um BOSS!</p>
+      <button class="btn-neon" onclick="GameController.showIntro()">[ VOLTAR ]</button>
+    </div>
+  </div>
+
+  <!-- TELA DE RANKING -->
+  <div id="screen-ranking" class="screen">
+    <div class="intro-bg"></div>
+    <div class="intro-content">
+      <h2 class="section-title">// RANKING LOCAL //</h2>
+      <div id="ranking-list" class="ranking-list"></div>
+      <button class="btn-neon" onclick="GameController.showIntro()">[ VOLTAR ]</button>
+    </div>
+  </div>
+
+  <!-- TELA DO JOGO -->
+  <div id="screen-game" class="screen">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- HUD -->
+    <div id="hud">
+      <div class="hud-left">
+        <div class="hud-block">
+          <span class="hud-label">HP</span>
+          <div class="hp-bar-wrap"><div id="hp-bar" class="hp-bar"></div></div>
+          <span id="hp-text" class="hud-value">100/100</span>
+        </div>
+        <div class="hud-block">
+          <span class="hud-label">HORDA</span>
+          <span id="hud-wave" class="hud-value big">01</span>
+        </div>
+      </div>
+      <div class="hud-center">
+        <div class="hud-block">
+          <span class="hud-label">INIMIGOS</span>
+          <span id="hud-enemies" class="hud-value">0</span>
+        </div>
+        <div class="hud-block">
+          <span class="hud-label">COMBO</span>
+          <span id="hud-combo" class="hud-value combo-val">x1</span>
+        </div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-block">
+          <span class="hud-label">PONTUAÇÃO</span>
+          <span id="hud-score" class="hud-value">0</span>
+        </div>
+        <div class="hud-block weapon-block">
+          <span class="hud-label">ARMA</span>
+          <span id="hud-weapon" class="hud-value weapon-name">PISTOLA</span>
+          <span id="hud-ammo" class="hud-value ammo-val">∞</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de armas -->
+    <div id="weapon-bar">
+      <div class="weapon-slot active" data-slot="0" title="Pistola [1]"><span class="slot-key">1</span><span class="slot-name">PISTOLA</span></div>
+      <div class="weapon-slot" data-slot="1" title="SMG [2]"><span class="slot-key">2</span><span class="slot-name">SMG</span></div>
+      <div class="weapon-slot" data-slot="2" title="Shotgun [3]"><span class="slot-key">3</span><span class="slot-name">SHOTGUN</span></div>
+      <div class="weapon-slot" data-slot="3" title="Rifle [4]"><span class="slot-key">4</span><span class="slot-name">RIFLE</span></div>
+      <div class="weapon-slot" data-slot="4" title="Laser [5]"><span class="slot-key">5</span><span class="slot-name">LASER</span></div>
+      <div class="weapon-slot" data-slot="5" title="Railgun [6]"><span class="slot-key">6</span><span class="slot-name">RAILGUN</span></div>
+    </div>
+
+    <!-- Upgrades ativos -->
+    <div id="active-upgrades"></div>
+  </div>
+
+  <!-- TELA DE UPGRADES (pós-horda) -->
+  <div id="screen-upgrade" class="screen">
+    <div class="upgrade-overlay">
+      <h2 class="upgrade-title">// HORDA CONCLUÍDA //</h2>
+      <p class="upgrade-sub">Escolha seu upgrade</p>
+      <div id="upgrade-cards" class="upgrade-cards"></div>
+    </div>
+  </div>
+
+  <!-- TELA DE GAME OVER -->
+  <div id="screen-gameover" class="screen">
+    <div class="intro-bg"></div>
+    <div class="intro-content">
+      <h2 class="game-over-title glitch" data-text="GAME OVER">GAME OVER</h2>
+      <div class="go-stats">
+        <div class="stat-row"><span>HORDA ALCANÇADA</span><span id="go-wave">0</span></div>
+        <div class="stat-row"><span>PONTUAÇÃO</span><span id="go-score">0</span></div>
+        <div class="stat-row"><span>INIMIGOS ELIMINADOS</span><span id="go-kills">0</span></div>
+        <div class="stat-row"><span>MAIOR COMBO</span><span id="go-combo">0</span></div>
+      </div>
+      <div class="go-buttons">
+        <button class="btn-neon btn-start" onclick="GameController.startGame()">[ TENTAR NOVAMENTE ]</button>
+        <button class="btn-neon" onclick="GameController.showIntro()">[ MENU ]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA DE PAUSA -->
+  <div id="screen-pause" class="screen">
+    <div class="pause-overlay">
+      <h2 class="section-title">// PAUSADO //</h2>
+      <button class="btn-neon" onclick="GameController.resumeGame()">[ CONTINUAR ]</button>
+      <button class="btn-neon" onclick="GameController.showIntro()">[ MENU ]</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/weapon.js"></script>
+  <script src="js/upgrades.js"></script>
+  <script src="js/enemy.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
